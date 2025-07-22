@@ -1,10 +1,7 @@
 <?php
-// Enable error reporting
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
+
+// Check if user is logged in and has admin role
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     echo "Access denied.";
     exit();
@@ -17,12 +14,16 @@ $password = "ebooking123";
 $database = "if0_39517079_ebooking_db";
 $conn = new mysqli($host, $username, $password, $database);
 
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Fetch registered users
 $user_sql = "SELECT id, username, email FROM users";
 $user_result = $conn->query($user_sql);
+
+// Check if query was successful
 if (!$user_result) {
     die("Error fetching users: " . $conn->error);
 }

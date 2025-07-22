@@ -6,17 +6,22 @@ require_once '../classes/Database.php';
 $db = new Database();
 $conn = $db->getConnection();
 
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // Sanitize user input
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
+    // Prevent SQL injection by escaping special characters
     $username = mysqli_real_escape_string($conn, $username);
     $password = mysqli_real_escape_string($conn, $password);
 
+    // Build and execute SQL query to verify user credentials
     $query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
     $result = mysqli_query($conn, $query);
       
-
+    // Check if a matching user was found
     if ($result && mysqli_num_rows($result) == 1) {
         $row = mysqli_fetch_assoc($result);
 

@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
-    // 防注入
+    // Escape special characters to prevent SQL injection
     $username = mysqli_real_escape_string($conn, $username);
     $email = mysqli_real_escape_string($conn, $email);
     $password = mysqli_real_escape_string($conn, $password);
@@ -17,6 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $query = "INSERT INTO users (username, email, password, role) VALUES ('$username', '$email', '$password', '$role')";
     if (mysqli_query($conn, $query)) {
+        
+        // Redirect to login page after successful registration
         header("Location: login.php");
         exit();
     } else {
