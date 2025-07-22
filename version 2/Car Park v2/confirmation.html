@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirmation - Smart Parking</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <a href="booking.html" class="back-btn">← Back</a>
+    <h2>Confirm Your Booking</h2>
+
+    <div class="confirmation-details">
+      <div class="detail-item"><strong>Vehicle:</strong> <span id="vehicle-info">Loading...</span></div>
+      <div class="detail-item"><strong>Duration:</strong> <span id="duration-info">Loading...</span></div>
+      <div class="detail-item"><strong>Total Fee:</strong> <span id="fee-info">Loading...</span></div>
+    </div>
+
+    <form id="payment-form">
+      <h3>Payment Method</h3>
+
+      <div class="payment-option-row">
+        <label for="tng">Touch 'n Go</label>
+        <input type="radio" name="payment" value="Touch 'n Go" id="tng" required />
+      </div>
+
+      <div class="payment-option-row">
+        <label for="duitnow">DuitNow</label>
+        <input type="radio" name="payment" value="DuitNow" id="duitnow" />
+      </div>
+
+      <div class="payment-option-row">
+        <label for="card">Credit/Debit Card</label>
+        <input type="radio" name="payment" value="Card" id="card" />
+      </div>
+
+      <div id="card-selection" style="display: none;">
+        <label for="card-dropdown">Select Card</label>
+        <select id="card-dropdown"></select>
+      </div>
+
+      <button type="submit">Pay</button>
+    </form>
+  </div>
+
+  <script>
+    function loadConfirmationDetails() {
+      const vehiclePlate = localStorage.getItem("defaultVehicle") || "N/A";
+      const vehicles = JSON.parse(localStorage.getItem("vehicles")) || [];
+      const vehicle = vehicles.find(v => v.plate === vehiclePlate);
+      document.getElementById("vehicle-info").innerText =
+        vehicle ? `${vehicle.plate} - ${vehicle.brand || vehicle.type}` : "N/A";
+
+      document.getElementById("duration-info").innerText =
+        localStorage.getItem("bookingDuration") || "N/A";
+
+      document.getElementById("fee-info").innerText =
+        localStorage.getItem("bookingFee") || "N/A";
+    }
+
+    function loadCards() {
+      const cards = JSON.parse(localStorage.getItem("cards")) || [];
+      const defaultCard = localStorage.getItem("defaultCard");
+      const dropdown = document.getElementById("card-dropdown");
+      dropdown.innerHTML = "";
+
+      cards.forEach(card => {
+        const option = document.createElement("option");
+        option.value = card.number;
+        option.textContent = `${card.brand} •••• ${card.number.slice(-4)}`;
+        option.selected = card.number === defaultCard;
+        dropdown.appendChild(option);
+      });
+    }
+
+    document.querySelectorAll('input[name="payment"]').forEach(radio => {
+      radio.addEventListener("change", function () {
+        const cardSection = document.getElementById("card-selection");
+        if (this.value === "Card") {
+          cardSection.style.display = "block";
+          loadCards();
+        } else {
+          cardSection.style.display = "none";
+        }
+      });
+    });
+
+    document.getElementById("payment-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const vehicle = localStorage.getItem("defaultVehicle") || "N/A";
+      const duration = localStorage.getItem("bookingDuration") || "N/A";
+      const fee = localStorage.getItem("bookingFee") || "N/A";
+      const district = document.getElementById("address-display")?.innerText || "Unknown District";
+
+      const history = JSON.parse(localStorage.getItem("parkingHistory")) || [];
+
+      history.push({
+        date: new Date().toLocaleString(),
+        district,
+        vehicle,
+        duration,
+        fee
+      });
+
+      localStorage.setItem("parkingHistory", JSON.stringify(history));
+
+      window.location.href = "payment.html";
+    });
+
+    window.onload = loadConfirmationDetails;
+  </script>
+</body>
+</html>
