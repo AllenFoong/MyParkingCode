@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel - Smart Parking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Admin - Manage Parking Slots</h2>
+  <form action="php/add_slots.php" method="POST">
+    <input type="text" name="slot_number" placeholder="Slot Number (e.g. A1)" required />
+    <button type="submit">Add Slot</button>
+  </form>
+
+  <h3>All Slots</h3>
+  <div id="admin-slots"></div>
+
+  <script>
+    fetch('php/admin_view.php')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('admin-slots').innerHTML = data;
+      });
+  </script>
+</body>
+</html>
