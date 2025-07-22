@@ -107,17 +107,60 @@ if (!isset($_SESSION['user_id'])) {
     }
 
     function confirmBooking() {
-      const vehicleSelect = document.getElementById('vehicle-selection').value;
-      if (!vehicleSelect || !selectedDuration || !selectedFee) {
-        alert("Please select duration and vehicle!");
-        return;
-      }
-      localStorage.setItem('bookingDuration', selectedDuration);
-      localStorage.setItem('bookingFee', 'RM ' + selectedFee.toFixed(2));
-      window.location.href = 'confirmation.php';
+        const vehicleSelect = document.getElementById('vehicle-selection').value;
+        if (!vehicleSelect || !selectedDuration || !selectedFee) {
+            alert("Please select duration and vehicle!");
+            return;
+        }
+
+        const bookingData = {
+            date: new Date().toLocaleString(), // ✅ Include booking time
+            vehicle: vehicleSelect,
+            duration: selectedDuration,
+            fee: 'RM ' + selectedFee.toFixed(2)
+        };
+
+        fetch('store_booking.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookingData)
+        }).then(res => res.json())
+            .then(data => {
+            if (data.status === 'success') {
+                window.location.href = 'confirmation.php';
+            }
+            });
     }
 
+
     window.onload = populateVehicles;
+
+    function confirmBooking() {
+    const vehicleSelect = document.getElementById('vehicle-selection').value;
+    if (!vehicleSelect || !selectedDuration || !selectedFee) {
+        alert("Please select duration and vehicle!");
+     return;
+    }
+
+    const booking = {
+        user_id: <?= json_encode($_SESSION['user_id']) ?>,
+        username: <?= json_encode($_SESSION['username']) ?>,
+        timestamp: new Date().toLocaleString(),
+        vehicle: vehicleSelect,
+        duration: selectedDuration,
+        fee: 'RM ' + selectedFee.toFixed(2)
+    };
+
+    // Store booking history in sessionStorage to simulate backend
+    fetch('store_booking.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(booking)
+    }).then(() => {
+        window.location.href = 'confirmation.php';
+    });
+    }
+
   </script>
 </body>
 

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eBooking - Smart Parking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: white;
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .login-btn {
+      background-color: #FFA726;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      background: url('https://pro-theme.com/html/getrider/assets/img/img-banner.jpg') no-repeat center center/cover;
+      height: calc(100vh - 60px);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero small {
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+    }
+
+    .get-started-btn {
+      border: 2px solid white;
+      background: transparent;
+      color: white;
+      padding: 10px 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .get-started-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">ebooking</div>
+    <a href="php/login.php" class="login-btn">Login</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <small>BOOK A PARKING SPOT TODAY! TRY EBOOKING</small>
+    <h1>Need to Park? Reserve Your Spot Now</h1>
+    <p>Save time. Avoid stress. Find parking fast.</p>
+    <a href="php/login.php"><button class="get-started-btn">Get Started</button></a>
+  </section>
+
+</body>
+</html>
