@@ -1,6 +1,8 @@
-<?php
+<?php 
 session_start();
-include('db_connect.php');
+require_once '../classes/Database.php';
+$db = new Database();
+$conn = $db->getConnection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
@@ -11,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = mysqli_real_escape_string($conn, $username);
     $email = mysqli_real_escape_string($conn, $email);
     $password = mysqli_real_escape_string($conn, $password);
-    $role = 'user'; // 固定为 user
+    $role = 'user';
 
     $query = "INSERT INTO users (username, email, password, role) VALUES ('$username', '$email', '$password', '$role')";
     if (mysqli_query($conn, $query)) {
@@ -29,44 +31,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Register</title>
     <style>
         body {
-            font-family: Arial;
-            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            background: url('https://pro-theme.com/html/getrider/assets/img/img-banner.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
         .container {
-            width: 350px;
-            margin: 100px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-        input[type="text"], input[type="email"], input[type="password"] {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 400px;
             width: 100%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 95%;
             padding: 10px;
-            margin: 8px 0 15px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         button {
-            width: 100%;
+            width: 95%;
             padding: 10px;
-            background: dodgerblue;
-            color: white;
+            background-color: #ffc107;
+            color: black;
             border: none;
             border-radius: 5px;
+            font-weight: bold;
             cursor: pointer;
+            display: block;
+            margin: 0 auto;
         }
+
         .login-link {
             text-align: center;
             margin-top: 15px;
         }
+
         .login-link a {
             color: purple;
             text-decoration: none;
         }
+
         .error {
             color: red;
-            margin-top: 5px;
+            margin-top: 10px;
             font-size: 14px;
             text-align: center;
         }

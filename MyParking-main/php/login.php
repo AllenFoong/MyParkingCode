@@ -1,39 +1,42 @@
 <?php
+ob_start(); // ✅ Start output buffering
+
 session_start();
-include('db_connect.php');
+require_once '../classes/Database.php';
+$db = new Database();
+$conn = $db->getConnection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // 防止 SQL 注入
     $username = mysqli_real_escape_string($conn, $username);
     $password = mysqli_real_escape_string($conn, $password);
 
-    // 查询数据库
     $query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
     $result = mysqli_query($conn, $query);
+      
 
     if ($result && mysqli_num_rows($result) == 1) {
         $row = mysqli_fetch_assoc($result);
 
-        // 设置 SESSION
         $_SESSION['user_id'] = $row['id'];
         $_SESSION['username'] = $row['username'];
         $_SESSION['role'] = $row['role'];
-        $_SESSION['loggedin'] = true; // ✅ 非常重要，防止跳回 login
+        $_SESSION['loggedin'] = true;
 
-        // 跳转到相应页面
         if ($row['role'] == 'admin') {
             header("Location: admin_dashboard.php");
         } else {
             header("Location: dashboard.php");
         }
-        exit(); // ✅ 必须终止继续加载 login 页
+        exit();
     } else {
         $error = "Invalid username or password.";
     }
 }
+ob_end_flush();
+
 ?>
 
 <!DOCTYPE html>
@@ -42,68 +45,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login</title>
     <style>
         body {
-            font-family: Arial;
-            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            background: url('https://pro-theme.com/html/getrider/assets/img/img-banner.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
         .container {
-            width: 350px;
-            margin: 120px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-        input[type="text"], input[type="password"] {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 400px;
             width: 100%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 95%;
             padding: 10px;
-            margin: 8px 0 15px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         button {
-            width: 100%;
+            width: 95%;
             padding: 10px;
-            background: green;
-            color: white;
+            background-color: #ffc107;
+            color: #000;
             border: none;
             border-radius: 5px;
+            font-weight: bold;
             cursor: pointer;
         }
+
         .register-link {
             text-align: center;
             margin-top: 15px;
         }
+
         .register-link a {
-            color: purple;
+            color: #007bff;
             text-decoration: none;
         }
+
         .error {
             color: red;
-            margin-top: 5px;
             font-size: 14px;
-            text-align: center;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2 style="text-align:center;">Login</h2>
-    <form method="POST" action="login.php">
-        <label>Username:</label>
-        <input type="text" name="username" required>
-
-        <label>Password:</label>
-        <input type="password" name="password" required>
-
-        <button type="submit">Login</button>
-
-        <?php if (isset($error)): ?>
-            <div class="error"><?php echo $error; ?></div>
+    <div class="container">
+        <h2>Login</h2>
+        <?php if (!empty($error)): ?>
+            <p class="error"><?= $error ?></p>
         <?php endif; ?>
-    </form>
-    <div class="register-link">
-        Don't have an account? <a href="register.php">Register here</a>
+        <form method="POST" action="login.php">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <div class="register-link">
+            Don't have an account? <a href="register.php">Register here</a>
+        </div>
     </div>
-</div>
 </body>
 </html>

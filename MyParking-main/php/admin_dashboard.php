@@ -1,35 +1,68 @@
 <?php
 session_start();
-include 'db_connect.php';
 
-if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
+// Check if admin is logged in
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     header('Location: login.php');
     exit();
 }
 
-// Fetch users
-$users = $conn->query("SELECT id, email FROM users");
-
-// Fetch bookings
-$bookings = $conn->query("SELECT * FROM bookings");
-
-// Fetch vehicles
-$vehicles = $conn->query("SELECT * FROM vehicles");
+// Load booking history from JSON file
+$bookings = [];
+$bookingFile = 'bookings.json';
+if (file_exists($bookingFile)) {
+    $content = file_get_contents($bookingFile);
+    $bookings = json_decode($content, true) ?? [];
+}
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Admin Dashboard - Smart Parking</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        body { font-family: Arial; margin: 0; padding: 0; background: #f4f4f4; }
-        .header { background: #333; color: white; padding: 15px; text-align: center; }
-        .container { padding: 20px; }
-        h2 { margin-top: 30px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background: #eee; }
-        .logout { float: right; background: red; color: white; padding: 6px 12px; text-decoration: none; border-radius: 5px; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background: #2f2f2f;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .logout {
+            float: right;
+            background: red;
+            color: white;
+            padding: 8px 14px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: -50px;
+            margin-right: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .booking-card {
+            background: #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+        .booking-card strong {
+            display: inline-block;
+            width: 80px;
+        }
     </style>
 </head>
 <body>
@@ -39,40 +72,21 @@ $vehicles = $conn->query("SELECT * FROM vehicles");
     </div>
 
     <div class="container">
-        <h2>All Users</h2>
-        <table>
-            <tr><th>ID</th><th>Email</th></tr>
-            <?php while ($user = $users->fetch_assoc()): ?>
-                <tr><td><?= $user['id'] ?></td><td><?= $user['email'] ?></td></tr>
-            <?php endwhile; ?>
-        </table>
+        <h2>Booking History (Demo Only)</h2>
 
-        <h2>All Bookings</h2>
-        <table>
-            <tr><th>ID</th><th>User ID</th><th>Location</th><th>Start</th><th>End</th></tr>
-            <?php while ($b = $bookings->fetch_assoc()): ?>
-                <tr>
-                    <td><?= $b['id'] ?></td>
-                    <td><?= $b['user_id'] ?></td>
-                    <td><?= $b['location'] ?></td>
-                    <td><?= $b['start_time'] ?></td>
-                    <td><?= $b['end_time'] ?></td>
-                </tr>
-            <?php endwhile; ?>
-        </table>
-
-        <h2>All Registered Vehicles</h2>
-        <table>
-            <tr><th>ID</th><th>User ID</th><th>Plate Number</th><th>Model</th></tr>
-            <?php while ($v = $vehicles->fetch_assoc()): ?>
-                <tr>
-                    <td><?= $v['id'] ?></td>
-                    <td><?= $v['user_id'] ?></td>
-                    <td><?= $v['plate_number'] ?></td>
-                    <td><?= $v['model'] ?></td>
-                </tr>
-            <?php endwhile; ?>
-        </table>
+        <?php if (empty($bookings)): ?>
+            <p>No bookings found.</p>
+        <?php else: ?>
+            <?php foreach ($bookings as $b): ?>
+                <div class="booking-card">
+                    <p><strong>User:</strong> <?= htmlspecialchars($b['username'] ?? 'Unknown') ?></p>
+                    <p><strong>Date:</strong> <?= htmlspecialchars($b['date']) ?></p>
+                    <p><strong>Vehicle:</strong> <?= htmlspecialchars($b['vehicle']) ?></p>
+                    <p><strong>Duration:</strong> <?= htmlspecialchars($b['duration']) ?></p>
+                    <p><strong>Fee:</strong> <?= htmlspecialchars($b['fee']) ?></p>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </body>
 </html>
