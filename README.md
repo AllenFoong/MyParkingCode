@@ -53,6 +53,8 @@ Admins can:
 - See all booking logs stored in the JSON file
 
 ## 📌 Notes
+- Myparking-main will be the latest version of code
+- Version 1 and 2 use store under 'Tags'
 - Booking history is stored in a JSON file for simplicity.
 - MySQL is used to store user account information.
 - Admin dashboard layout is split into two sections:
